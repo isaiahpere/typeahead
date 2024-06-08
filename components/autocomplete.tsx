@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import SuggestionsList from "./suggestions-list";
+import debounce from "lodash/debounce";
 
 interface IProps {
   placeholder: any;
@@ -59,15 +60,27 @@ const Autocomplete = ({
     }
   };
 
+  const getSuggestionsDebounced = useCallback(
+    debounce(getSuggestions, 300),
+    []
+  );
+
   useEffect(() => {
     if (inputValue.length > 1) {
-      getSuggestions(inputValue);
+      getSuggestionsDebounced(inputValue);
     } else {
       setSuggestions([]);
     }
   }, [inputValue]);
 
-  const handleSuggestionClick = () => {};
+  const handleSuggestionClick = (suggestion: any) => {
+    setInputvalue(dataKey ? suggestion[dataKey] : suggestion);
+    onSelect(suggestion);
+    setSuggestions([]);
+  };
+
+  console.log(suggestions[0]);
+
   return (
     <section
       data-name="container"
@@ -84,7 +97,9 @@ const Autocomplete = ({
         className="w-full py-1 border-2 border-slate-500 rounded-md pl-2"
       />
 
-      {(suggestions.length > 0 || loading || error) && (
+      {((suggestions.length > 0 && suggestions[0].name !== inputValue) ||
+        loading ||
+        error) && (
         <ul
           data-name="suggestion-list"
           className="absolute left-0 top-9 right-0 w-full borer border-slate-800 border-t-0 rounded-md rounded-tl-none rounded-tr-none shadow-lg z-10 max-h-40 overflow-y-auto m-0 p-0 "
