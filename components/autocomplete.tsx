@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
+import SuggestionsList from "./suggestions-list";
+
 interface IProps {
   placeholder: any;
   staticData?: any;
@@ -19,7 +21,7 @@ const Autocomplete = ({
   staticData,
   fetchSuggestions,
   dataKey,
-  customLoading,
+  customLoading = "Loading...",
   onSelect,
   onChange,
   onBlur,
@@ -57,8 +59,6 @@ const Autocomplete = ({
     }
   };
 
-  console.log(suggestions);
-
   useEffect(() => {
     if (inputValue.length > 1) {
       getSuggestions(inputValue);
@@ -67,8 +67,12 @@ const Autocomplete = ({
     }
   }, [inputValue]);
 
+  const handleSuggestionClick = () => {};
   return (
-    <section data-name="container">
+    <section
+      data-name="container"
+      className="relative w-[300px] flex flex-col items-center justify-center gap-4"
+    >
       <input
         type="text"
         value={inputValue}
@@ -77,8 +81,32 @@ const Autocomplete = ({
         onBlur={onBlur}
         onFocus={onFocus}
         onChange={handleInputChange}
-        className="border-2 border-slate-500"
+        className="w-full py-1 border-2 border-slate-500 rounded-md pl-2"
       />
+
+      {(suggestions.length > 0 || loading || error) && (
+        <ul
+          data-name="suggestion-list"
+          className="absolute left-0 top-9 right-0 w-full borer border-slate-800 border-t-0 rounded-md rounded-tl-none rounded-tr-none shadow-lg z-10 max-h-40 overflow-y-auto m-0 p-0 "
+        >
+          {error && (
+            <div data-name="error" className="p-2.5 text-[14px] text-red-600">
+              {error}
+            </div>
+          )}
+          {loading && (
+            <div data-name="loading" className="p-2.5 text-lg text-[#555]">
+              {customLoading}
+            </div>
+          )}
+          <SuggestionsList
+            dataKey={dataKey}
+            highlight={inputValue}
+            suggestions={suggestions}
+            onSuggestionClick={handleSuggestionClick}
+          />
+        </ul>
+      )}
     </section>
   );
 };

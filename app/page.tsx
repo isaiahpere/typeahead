@@ -1,6 +1,20 @@
 "use client";
 import Autocomplete from "@/components/autocomplete";
 
+const staticData = [
+  "apple",
+  "banana",
+  "berrl",
+  "orange",
+  "grape",
+  "mango",
+  "melon",
+  "berry",
+  "peach",
+  "cherry",
+  "plum",
+];
+
 export default function Home() {
   const fetchSuggestions = async (query: any) => {
     try {
@@ -14,7 +28,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-10">
+    <main className="flex min-h-screen flex-col items-center p-10 gap-6">
       <h1 className="text-4xl font-bold">Custom Typeahead</h1>
       <Autocomplete
         placeholder={"Enter Recipe"}
