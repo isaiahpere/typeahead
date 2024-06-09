@@ -35,7 +35,7 @@ export default function Home() {
         placeholder={"Enter Recipe"}
         // staticData={staticData}
         fetchSuggestions={fetchSuggestions}
-        dataKey={"name"}
+        dataKey={"name"} // key of api response array
         customLoading={<>Loading Recipes...</>}
         onSelect={(res) => {
           console.log(res);

@@ -3,8 +3,9 @@ import React, { useEffect, useRef } from "react";
 const getCurrentTimeStamp = () => Math.floor(Date.now() / 1000);
 
 const useCache = (key: string, expirationInSeconds: any) => {
-  const cache = useRef<any>({});
+  const cache = useRef<any>({}); // persist data
 
+  // check cache --> if item update cache ref
   useEffect(() => {
     let item = localStorage.getItem(key);
     if (item) {
