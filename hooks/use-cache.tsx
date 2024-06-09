@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useRef } from "react";
 
 const getCurrentTimeStamp = () => Math.floor(Date.now() / 1000);

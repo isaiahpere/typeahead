@@ -43,7 +43,6 @@ export default function Home() {
         onChange={(input) => {}}
         onBlur={(e) => {}}
         onFocus={(e) => {}}
-        customStyles={""}
       />
     </main>
   );

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 interface IProps {
@@ -5,11 +6,13 @@ interface IProps {
   highlight: any;
   dataKey: any;
   onSuggestionClick: any;
+  selectedIndex: any;
 }
 const SuggestionsList = ({
   suggestions,
   highlight,
   dataKey,
+  selectedIndex,
   onSuggestionClick,
 }: IProps) => {
   // highlights the keywords currently in input value
@@ -39,10 +42,16 @@ const SuggestionsList = ({
         return (
           <li
             key={index}
+            role="option"
+            aria-selected={selectedIndex === index}
+            id={`suggestion-${index}`}
             onClick={() => {
               onSuggestionClick(suggestion);
             }}
-            className="p-2.5 cursor-pointer hover:bg-[#f0f0f0]"
+            className={cn(
+              "p-2.5 cursor-pointer hover:bg-[#f0f0f0]",
+              `${selectedIndex === index && "bg-lime-400"} `
+            )}
           >
             {getHighlightedText(currentSuggestion, highlight)}
           </li>
