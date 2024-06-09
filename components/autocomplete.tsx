@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import SuggestionsList from "./suggestions-list";
 import debounce from "lodash/debounce";
+import useCache from "@/hooks/use-cache";
 
 interface IProps {
   placeholder: any;
@@ -10,6 +11,7 @@ interface IProps {
   fetchSuggestions: any;
   dataKey: any;
   customLoading: any;
+  caching: boolean;
   onSelect: (res: any) => void;
   onChange: (input: any) => void;
   onBlur: (e: any) => void;
@@ -23,6 +25,7 @@ const Autocomplete = ({
   fetchSuggestions,
   dataKey,
   customLoading = "Loading...",
+  caching = true,
   onSelect,
   onChange,
   onBlur,
@@ -34,37 +37,49 @@ const Autocomplete = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // cache hook
+  const { setCache, getCache } = useCache("autocomplete", 3600);
+
+  // update input value
   const handleInputChange = (e: any) => {
     setInputvalue(e.target.value);
-    onChange(e.target.avlue);
+    onChange(e.target.avlue); // not doing anything currently
   };
 
+  // fetch dynamic suggestions from API or get static suggestions
   const getSuggestions = async (query: string) => {
     setLoading(true);
     setError("");
-    try {
-      let results;
-      if (staticData) {
-        results = staticData.filter((item: any) => {
-          return item.toLowerCase().includes(query.toLocaleLowerCase());
-        });
-      } else if (fetchSuggestions) {
-        results = await fetchSuggestions(query);
+    const cachedSuggestions = getCache(query);
+    if (cachedSuggestions && caching) {
+      setSuggestions(cachedSuggestions);
+    } else {
+      try {
+        let results;
+        if (staticData) {
+          results = staticData.filter((item: any) => {
+            return item.toLowerCase().includes(query.toLocaleLowerCase());
+          });
+        } else if (fetchSuggestions) {
+          results = await fetchSuggestions(query);
+          setCache(query, results);
+        }
+        setSuggestions(results);
+      } catch (error) {
+        setError("Failed to Fetch Suggestions");
+        setSuggestions([]);
+      } finally {
+        setLoading(false);
       }
-      setSuggestions(results);
-    } catch (error) {
-      setError("Failed to Fetch Suggestions");
-      setSuggestions([]);
-    } finally {
-      setLoading(false);
     }
   };
-
+  // LOADDASH DEBOUNCER
   const getSuggestionsDebounced = useCallback(
     debounce(getSuggestions, 300),
     []
   );
 
+  // update the suggestion when input changes
   useEffect(() => {
     if (inputValue.length > 1) {
       getSuggestionsDebounced(inputValue);
@@ -73,13 +88,12 @@ const Autocomplete = ({
     }
   }, [inputValue]);
 
+  // when suggestion clicked update input value to clicked suggestion
   const handleSuggestionClick = (suggestion: any) => {
     setInputvalue(dataKey ? suggestion[dataKey] : suggestion);
     onSelect(suggestion);
     setSuggestions([]);
   };
-
-  console.log(suggestions[0]);
 
   return (
     <section

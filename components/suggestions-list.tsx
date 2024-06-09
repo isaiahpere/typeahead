@@ -12,6 +12,8 @@ const SuggestionsList = ({
   dataKey,
   onSuggestionClick,
 }: IProps) => {
+  // highlights the keywords currently in input value
+  // then puts the backtogether with highlighted keyword in color
   const getHighlightedText = (text?: any, highlight?: any) => {
     const parts = text.split(new RegExp(`(${highlight})`, "gi"));
 

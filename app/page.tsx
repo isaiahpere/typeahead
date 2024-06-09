@@ -31,6 +31,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center p-10 gap-6">
       <h1 className="text-4xl font-bold">Custom Typeahead</h1>
       <Autocomplete
+        caching
         placeholder={"Enter Recipe"}
         // staticData={staticData}
         fetchSuggestions={fetchSuggestions}
